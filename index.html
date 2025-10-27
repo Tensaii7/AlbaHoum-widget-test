@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alba Houm Widget Test</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f7f7f8; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,.06); }
+    .header { text-align: center; margin-bottom: 20px; }
+    .widget { display: flex; justify-content: center; margin-top: 16px; }
+    .note { color: #444; font-size: 14px; line-height: 1.5; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 6px; }
+  </style>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    const e = React.createElement;
+    function App() {
+      return e('div', { className: 'container' },
+        e('div', { className: 'header' },
+          e('h1', null, 'Тестирование Alba Houm Widget'),
+          e('p', { className: 'note' }, 'Ниже будет встроен виджет через скрипт.')),
+        e('div', { className: 'card' },
+          e('div', null,
+            e('strong', null, 'Локальный режим:'), ' убедитесь, что собран фронт и раздаётся ',
+            e('code', null, 'dist'), ' на ', e('code', null, 'http://localhost:3000'), '.'
+          ),
+          e('div', { className: 'widget' },
+            e('div', { id: 'widget-anchor' })
+          )
+        )
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(e(App));
+
+    // Вставляем скрипт виджета после маунта React
+    (function injectWidget() {
+      const anchor = document.getElementById('widget-anchor');
+      if (!anchor) return;
+      const s = document.createElement('script');
+      // Для локального теста используем сборку из dist
+      // Если вы публикуете на проде, замените на https://alba-houm.ru/widget.js
+      s.src = 'https://alba-houm.ru/widget.js';
+      s.setAttribute('data-width', '100%');
+      s.setAttribute('data-height', '640');
+      // Пример предзаданных дат: раскомментируйте при необходимости
+      // s.setAttribute('data-check-in', '2025-10-10');
+      // s.setAttribute('data-check-out', '2025-10-12');
+
+      // Чтобы виджет появился под этим скриптом, вставим тег рядом с якорем
+      anchor.parentNode.insertBefore(s, anchor.nextSibling);
+    })();
+  </script>
+</body>
+</html>
+
+
